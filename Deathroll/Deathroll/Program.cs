@@ -15,6 +15,70 @@ namespace Deathroll
     {
         static void Main(string[] args)
         {
+            Random rng = new Random();
+            int goldUser = 1000;
+            int goldComputer = 1000;
+            Console.WriteLine("Vitej ve hre Deathroll.");
+            Console.WriteLine("Tvuj aktualni pocet goldu: " + goldUser + " Muj aktualni pocet goldu: " + goldComputer);
+            while (goldUser > 0 && goldComputer > 0)
+            {
+                Console.WriteLine("Vsad vybrany pocet svych goldu.");
+                int rollUser = Convert.ToInt32(Console.ReadLine());
+                if (rollUser > goldUser)
+                {
+                    Console.WriteLine("Nemuzes vsazet vice goldu, nez mas.");
+                    break;
+                }
+                else if (rollUser <= 0)
+                {
+                    Console.WriteLine("Musis zvolit kladne cislo.");
+                    break;
+                }
+
+                int firstRoll = rollUser;
+                int rollComputer = firstRoll;
+                while (rollUser != 1 && rollComputer != 1)
+                {
+                    Console.WriteLine("Tocim mezi 1 a " + rollComputer + "(zmackni enter)");
+                    Console.ReadKey();
+                    rollUser = rng.Next(1, rollComputer);
+                    Console.WriteLine("Padlo ti " + rollUser + "(zmackni enter)");
+                    if (rollUser == 1) break;
+                    Console.ReadKey();
+                    Console.WriteLine("Tocim mezi 1 a " + rollUser + "(zmackni enter)");
+                    Console.ReadKey();
+                    rollComputer = rng.Next(1, rollUser);
+                    Console.WriteLine("Mne padlo " + rollComputer + "(zmackni enter)");
+                    if (rollComputer == 1) break;
+                    Console.ReadKey();
+                }
+
+                if (rollComputer == 1)
+                {
+                    Console.WriteLine("Prohral jsem.");
+                    goldComputer = goldComputer - firstRoll;
+                    Console.WriteLine("Tvuj aktualni pocet goldu: " + goldUser + " Muj aktualni pocet goldu: " + goldComputer);
+                }
+                if (rollUser == 1)
+                {
+                    Console.WriteLine("Prohral jsi.");
+                    goldUser = goldUser - firstRoll;
+                    Console.WriteLine("Tvuj aktualni pocet goldu: " + goldUser + " Muj aktualni pocet goldu: " + goldComputer);
+                }
+            }
+            
+            if (goldComputer == 0)
+            {
+                Console.WriteLine("Konec. Uz nemam goldy.");
+            }
+            else if (goldUser == 0)
+            {
+                Console.WriteLine("Konec. Uz nemas goldy.");
+            }
+
+            Console.ReadKey();
+
+
             /*
              * Jednoduchy program na procviceni podminek a cyklu (lze udelat i rekurzi).
              * 
