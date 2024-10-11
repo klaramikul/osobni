@@ -141,7 +141,7 @@ namespace Calculator
         /// <returns>mocnina (vstup)</returns>
         static float Squared(float x)
         {
-            return (float)Math.Sqrt(x);
+            return (float)Math.Pow(x,2);
         }
 
         /// <summary>
