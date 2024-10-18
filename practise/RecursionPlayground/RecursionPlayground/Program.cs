@@ -24,8 +24,10 @@ namespace RecursionPlayground
 
         static int Factorial(int n)
         {
+            int result;
+            // int faktorial = n (n-1)
             // TODO: Urci ukoncovaci podminku pro faktorial a zavolej Factorial zevnitr se spravnym parametrem / vypoctem.
-            return 0; // TODO: Uprav, aby Factorial vracel spravnou hodnotu.
+            return result = Factorial (Factorial (n)); // TODO: Uprav, aby Factorial vracel spravnou hodnotu.
         }
 
         static int Fibonacci(int n)
