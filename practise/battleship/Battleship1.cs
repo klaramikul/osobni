@@ -360,7 +360,7 @@ namespace battleship1
                 //smerem dolu
                 i = coordinates.Item1;
                 while (i <= 11 && array1[i, coordinates.Item2] == "x") i++;
-                if (i <= 11 && array1[i, coordinates.Item2] == "L") isSunk = false;
+                if (i < 11 && array1[i, coordinates.Item2] == "L") isSunk = false;
             }
             else if (orientation == 1)
             {
@@ -371,8 +371,8 @@ namespace battleship1
 
                 //doprava
                 i = coordinates.Item2;
-                while (i <= 11 && array1[coordinates.Item1, i] == "x") i++;
-                if (i <= 11 && array1[coordinates.Item1, i] == "L") isSunk = false;
+                while (i < 11 && array1[coordinates.Item1, i] == "x") i++;
+                if (i < 11 && array1[coordinates.Item1, i] == "L") isSunk = false;
             }
             
             //propiseme do pole, ze lod je potopena
@@ -381,7 +381,7 @@ namespace battleship1
                 int i = coordinates.Item1;
                 while (i >= 1 && array2[i, coordinates.Item2] == "x") i--; //najdeme horni okraj
                 i++;
-                while (i<=11 && array2[i, coordinates.Item2] == "x") //postupujeme dolu, dokud tam je lod
+                while (i<11 && array2[i, coordinates.Item2] == "x") //postupujeme dolu, dokud tam je lod
                 {
                     array2[i, coordinates.Item2] = "X";
                     i++;
@@ -394,7 +394,7 @@ namespace battleship1
                 int i = coordinates.Item2;
                 while (i >= 1 && array2[coordinates.Item1, i] == "x") i--; //najdeme levy okraj
                 i++;
-                while (i <= 11 && array2[coordinates.Item1, i] == "x") //postupujeme doprava, dokud tam je lod
+                while (i < 11 && array2[coordinates.Item1, i] == "x") //postupujeme doprava, dokud tam je lod
                 {
                     array2[coordinates.Item1, i] = "X";
                     i++;
@@ -416,7 +416,7 @@ namespace battleship1
                     Console.WriteLine("Smula, nic jsi netrefil. Ted ja. Az budes ready, zmackni jakoukoliv klavesu.");
                     Console.WriteLine();
                 }
-                else if (array1[coordinates.Item1, coordinates.Item2] == "x")
+                else if (array1[coordinates.Item1, coordinates.Item2] == "L")
                 {
                     array2[coordinates.Item1, coordinates.Item2] = "x";
                     Console.WriteLine("Trefa! Zásah do lodi.");
@@ -441,13 +441,13 @@ namespace battleship1
                 Console.ReadKey();
                 if (array1[coordinates.Item1, coordinates.Item2] == "-")
                 {
-                    array2[coordinates.Item1, coordinates.Item2] = "O";
+                    array1[coordinates.Item1, coordinates.Item2] = "O";
                     Console.WriteLine("Smula, nic jsem netrefil. Ted ty.");
                     Console.WriteLine();
                 }
-                else if (array1[coordinates.Item1, coordinates.Item2] == "x")
+                else if (array1[coordinates.Item1, coordinates.Item2] == "L")
                 {
-                    array2[coordinates.Item1, coordinates.Item2] = "x";
+                    array1[coordinates.Item1, coordinates.Item2] = "x";
                     Console.WriteLine("Trefa! Zásah do lodi.");
                     Console.WriteLine();
                 }
