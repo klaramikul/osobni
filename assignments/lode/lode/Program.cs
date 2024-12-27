@@ -141,7 +141,7 @@ namespace lode
         static string ConvertCoordinatestoInput(int r, int c)
         {
             char col = (char)('A' + (c - 1));
-            int row = r - 1;
+            int row = r;
             return $"{col}{row}"; //s pomoci Chat GPT
         }
 
@@ -318,89 +318,15 @@ namespace lode
         }
 
 
-        static (int, int) GetRandomCoordinates()
+        static (int, int) GetRandomCoordinates(string[,] array)
         {
             Random rng = new Random();
             (int, int) coordinates = (rng.Next(1, 11), rng.Next(1, 11));
+            while (array[coordinates.Item1, coordinates.Item2] == "O" || array[coordinates.Item1, coordinates.Item2] == "x") //nestrili na mista, kam uz strilel
+            {
+                coordinates = (rng.Next(1, 11), rng.Next(1, 11));
+            }
             return coordinates;
-        }
-
-        /// <summary>
-        /// Kontroluje, jestli ze zasazene lodi jeste neco zbyva, pripadne ji oznaci za potopenou
-        /// </summary>
-        /// <param name="array">pole, ve kterem hledam</param>
-        /// <param name="coordinates">misto, kam bylo streleno</param>
-        /// <returns>byla/nebyla potopena</returns>
-        static bool IsBoatSunk(string[,] array1, string[,] array2, (int, int) coordinates)
-        {
-            int orientation = 3;
-
-            //zjistime orientaci
-            if (coordinates.Item1 + 1 < 11 && array1[coordinates.Item1 + 1, coordinates.Item2] != "-" && array1[coordinates.Item1 + 1, coordinates.Item2] != "O" || coordinates.Item1 - 1 > 0 && array1[coordinates.Item1 - 1, coordinates.Item2] != "-" && array1[coordinates.Item1 - 1, coordinates.Item2] != "O")
-            {
-                orientation = 0;
-            }
-            if (coordinates.Item2 + 1 < 11 && array1[coordinates.Item1, coordinates.Item2 + 1] != "-" && array1[coordinates.Item1, coordinates.Item2 + 1] != "O" || coordinates.Item2 - 1 > 0 && array1[coordinates.Item1, coordinates.Item2 - 1] != "-" && array1[coordinates.Item1, coordinates.Item2 - 1] != "O")
-            {
-                orientation = 1;
-            }
-
-            bool isSunk = true;
-
-            //zjistime, zda je potopena
-            if (orientation == 0)
-            {
-                //smerem nahoru
-                int i = coordinates.Item1;
-                while (i >= 1 && array1[i, coordinates.Item2] == "x") i--;
-                if (i >= 1 && array1[i, coordinates.Item2] == "L") isSunk = false;
-
-                //smerem dolu
-                i = coordinates.Item1;
-                while (i <= 11 && array1[i, coordinates.Item2] == "x") i++;
-                if (i < 11 && array1[i, coordinates.Item2] == "L") isSunk = false;
-            }
-            else if (orientation == 1)
-            {
-                //doleva
-                int i = coordinates.Item2;
-                while (i >= 1 && array1[coordinates.Item1, i] == "x") i--;
-                if (i >= 1 && array1[coordinates.Item1, i] == "L") isSunk = false;
-
-                //doprava
-                i = coordinates.Item2;
-                while (i < 11 && array1[coordinates.Item1, i] == "x") i++;
-                if (i < 11 && array1[coordinates.Item1, i] == "L") isSunk = false;
-            }
-
-            //propiseme do pole, ze lod je potopena
-            if (orientation == 0)
-            {
-                int i = coordinates.Item1;
-                while (i >= 1 && array2[i, coordinates.Item2] == "x") i--; //najdeme horni okraj
-                i++;
-                while (i < 11 && array2[i, coordinates.Item2] == "x") //postupujeme dolu, dokud tam je lod
-                {
-                    array2[i, coordinates.Item2] = "X";
-                    i++;
-                }
-
-            }
-
-            else if (orientation == 1)
-            {
-                int i = coordinates.Item2;
-                while (i >= 1 && array2[coordinates.Item1, i] == "x") i--; //najdeme levy okraj
-                i++;
-                while (i < 11 && array2[coordinates.Item1, i] == "x") //postupujeme doprava, dokud tam je lod
-                {
-                    array2[coordinates.Item1, i] = "X";
-                    i++;
-                }
-            }
-
-            return isSunk; //nenachazi-li se zadne "L" vrati true, lod je potopena
-
         }
 
         static void FireShot(string[,] array1, string[,] array2, (int, int) coordinates, bool isRandom)
@@ -411,26 +337,26 @@ namespace lode
                 if (array1[coordinates.Item1, coordinates.Item2] == "-")
                 {
                     array2[coordinates.Item1, coordinates.Item2] = "O";
+                    Console.WriteLine("Moje pole:");
+                    DisplayArray(array2);
                     Console.WriteLine("Smula, nic jsi netrefil. Ted ja. Az budes ready, zmackni jakoukoliv klavesu.");
                     Console.WriteLine();
                 }
                 else if (array1[coordinates.Item1, coordinates.Item2] == "L")
                 {
                     array2[coordinates.Item1, coordinates.Item2] = "x";
+                    Console.WriteLine("Moje pole:");
+                    DisplayArray(array2);
                     Console.WriteLine("Trefa! Zásah do lodi.");
-                    if (IsBoatSunk(array1, array2, coordinates) == true)
-                    {
-                        Console.WriteLine("Potopil jsi ji celou! Ted je napsana velkymi pismeny. Az budes ready na moji strelbu, zmackni jakoukoliv klavesu.");
-                        Console.WriteLine();
-                    }
+                   
                 }
                 else if (array1[coordinates.Item1, coordinates.Item2] == "X" || array1[coordinates.Item1, coordinates.Item2] == "O")
                 {
+                    Console.WriteLine("Moje pole:");
+                    DisplayArray(array2);
                     Console.WriteLine("Sem uz jsi strilel...Tvoje smula. Ted jsem na rade ja, zmackni jakoukoliv klavesu.");
                     Console.WriteLine();
                 }
-                Console.WriteLine("Moje pole:");
-                DisplayArray(array2);
             }
             else
             {
@@ -440,18 +366,20 @@ namespace lode
                 if (array1[coordinates.Item1, coordinates.Item2] == "-")
                 {
                     array1[coordinates.Item1, coordinates.Item2] = "O";
+                    Console.WriteLine("Tvoje pole:");
+                    DisplayArray(array2);
                     Console.WriteLine("Smula, nic jsem netrefil. Ted ty.");
                     Console.WriteLine();
                 }
                 else if (array1[coordinates.Item1, coordinates.Item2] == "L")
                 {
                     array1[coordinates.Item1, coordinates.Item2] = "x";
+                    Console.WriteLine("Tvoje pole:");
+                    DisplayArray(array2);
                     Console.WriteLine("Trefa! Zásah do lodi.");
                     Console.WriteLine();
                 }
-                Console.WriteLine("Tvoje pole:");
-                DisplayArray(array2);
-                IsBoatSunk(array1, array2, coordinates);
+                
             }
 
 
@@ -480,7 +408,7 @@ namespace lode
             PlaceShips(hiddenBoard, playerBoard, true);
 
             //hraje se dokud nekdo nema potopene vsechny lode
-            while (!AreAllSunk(playerBoard) && !AreAllSunk(hiddenBoard))
+            while (!AreAllSunk(playerBoard) || !AreAllSunk(hiddenBoard))
             {
                 //hrac strili
                 Console.WriteLine("Ted strilis ty. Muzes si vybrat 1 pole, kam zamiris.");
@@ -488,7 +416,7 @@ namespace lode
 
                 Console.ReadKey();
                 //pocitac strili
-                FireShot(playerBoard, playerBoard, GetRandomCoordinates(), true);
+                FireShot(playerBoard, playerBoard, GetRandomCoordinates(playerBoard), true);
             }
 
             //zkontroluje a vyhlasi, kdo vyhral
