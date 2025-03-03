@@ -9,6 +9,7 @@ namespace oktagon
 {
     internal class Fighter
     {
+        //zakladni technicke veci
         public int fighterNumber { get; set; }
         public string name { get; set; }
         public int striking { get; set; }
@@ -36,11 +37,13 @@ namespace oktagon
             this.overallAbilities = overallAbilities;
         }
 
+        //vypocet celkoveho skore dovednosti
         public double CalculateOverallAbilities()
         {
             return overallAbilities = 1.5 * striking + 1.2 * grappling + speed + strength + 0.8 * popularity + 1.3 * experience;
         }
 
+        //vypocet ceny za zapas 1 bojovnika
         public int CalculateFightPrice(double overallAbilities, int popularity, int experience)
         {
             double basePrice = overallAbilities * 10;  // zaklad ceny
@@ -50,6 +53,8 @@ namespace oktagon
             int totalPrice = (int)(basePrice + popularityBonus + experienceBonus);
             return totalPrice;
         }
+
+        //vypsani informaci o fighterovi
         public override string ToString()
         {
             return

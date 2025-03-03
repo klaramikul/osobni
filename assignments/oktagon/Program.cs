@@ -11,6 +11,15 @@ namespace oktagon
 
         static void Main(string[] args)
         {
+            //uvod do hry
+            Console.WriteLine("Vitej v simulaci Oktagon MMA!");
+            Console.WriteLine("Jako promoter organizace se staras o jeji rozpocet a planujes zapasy.");
+            Console.WriteLine("Na zacatku mas 5 zapasniku a 20 000 CZK.");
+            Console.WriteLine("Kazdy zapas stoji penize, ale prinasi i odmeny podle atraktivity.");
+            Console.WriteLine("Atraktivita zavisi na vyrovnanosti bojovniku a jejich popularite.");
+            Console.WriteLine("Promyslene planuj zapasy a rozsiruj svuj tym!");
+
+            //zalozeni organizace a zapsani zapasniku
             Organization oktagonMMA = new Organization("oktagon MMA",20000);
 
             List<Fighter> fighters = new List<Fighter>
@@ -30,46 +39,85 @@ namespace oktagon
                 new Fighter(9, "Robert Pukac", 81, 70, 78, 86, 66, 55, 0, false,0),
                 new Fighter(10, "Matus Juracek", 82, 78, 82, 84, 71, 69, 0, false,0),
             };
+             
+            //hlavni smycka hry
+            while (oktagonMMA.budget>7491) //minimalni mozna cena za zapas, dokud je budget vyssi, uzivatel muze pokracovat
+            {
+                //vypocet ceny a skore dovednosti
+                foreach (Fighter fighter in fighters)
+                {
+                    fighter.overallAbilities = fighter.CalculateOverallAbilities();
+                    fighter.fightPrice = fighter.CalculateFightPrice(fighter.overallAbilities, fighter.popularity, fighter.experience);
+                }
 
-            foreach (Fighter fighter in unsignedFighters)
-            {
-                fighter.overallAbilities = fighter.CalculateOverallAbilities();
-                fighter.fightPrice = fighter.CalculateFightPrice(fighter.overallAbilities, fighter.popularity, fighter.experience);
-            }
+                foreach (Fighter fighter in unsignedFighters)
+                {
+                    fighter.overallAbilities = fighter.CalculateOverallAbilities();
+                    fighter.fightPrice = fighter.CalculateFightPrice(fighter.overallAbilities, fighter.popularity, fighter.experience);
+                }
 
-            foreach (Fighter fighter in unsignedFighters)
-            {
-                fighter.overallAbilities = fighter.CalculateOverallAbilities();
-                fighter.fightPrice = fighter.CalculateFightPrice(fighter.overallAbilities, fighter.popularity, fighter.experience);
-            }
-            
-            while (oktagonMMA.budget>0)
-            {
-                Console.WriteLine("Seznam bojovniku:");
+                //vypis dostupnych fighteru
+                Console.WriteLine("\n--- Seznam dostupnych zapasniku ---");
                 foreach (var fighter in fighters)
                 {
                     Console.WriteLine(fighter);
                 }
 
-                Console.WriteLine("Vyber prvniho zapasnika - napis jeho cislo (napr. 3 pro Pirata Kristofice):");
-                int fighter1Num = int.Parse(Console.ReadLine());
-                Fighter fighter1 = fighters.Find(f => f.fighterNumber == fighter1Num); //zdroj ChatGPT
-
-                Console.Write("Vyber pro nej soupere (cislo): ");
-                int fighter2Num = int.Parse(Console.ReadLine());
-                Fighter fighter2 = fighters.Find(f => f.fighterNumber == fighter2Num);
-
-                if (fighter1 == null || fighter2 == null || fighter1 == fighter2)
+                //vyber hracu pro zapas
+                int fighter1Num;
+                while (true)
                 {
-                    Console.WriteLine("Neplatny vyber bojovniku!");
-                    return;
+                    Console.WriteLine("Vyber prvniho zapasnika - napis jeho cislo (napr. 3 pro Pirata Kristofice):");
+                    if (int.TryParse(Console.ReadLine(), out fighter1Num))
+                        break;
+                    Console.WriteLine("Neplatny vstup! Zadejte cislo fightera.");
                 }
 
+                Fighter fighter1 = fighters.Find(f => f.fighterNumber == fighter1Num);
+
+                int fighter2Num;
+                while (true)
+                {
+                    Console.Write("Vyber pro nej soupere (cislo): ");
+                    if (int.TryParse(Console.ReadLine(), out fighter2Num))
+                        break;
+                    Console.WriteLine("Neplatny vstup! Zadejte cislo fightera.");
+                }
+
+                Fighter fighter2 = fighters.Find(f => f.fighterNumber == fighter2Num);
+
+                while (fighter1 == null || fighter2 == null || fighter1 == fighter2)
+                {
+                    Console.WriteLine("Neplatna volba! Ujisti se, ze vybiras dva ruzne existujici bojovniky.");
+
+                    while (true)
+                    {
+                        Console.WriteLine("Vyber prvniho zapasnika - napis jeho cislo:");
+                        if (int.TryParse(Console.ReadLine(), out fighter1Num))
+                            break;
+                        Console.WriteLine("Neplatny vstup! Zadejte cislo fightera.");
+                    }
+                    fighter1 = fighters.Find(f => f.fighterNumber == fighter1Num);
+
+                    while (true)
+                    {
+                        Console.Write("Vyber pro nej soupere (cislo): ");
+                        if (int.TryParse(Console.ReadLine(), out fighter2Num))
+                            break;
+                        Console.WriteLine("Neplatny vstup! Zadejte cislo fightera.");
+                    }
+                    fighter2 = fighters.Find(f => f.fighterNumber == fighter2Num);
+                }
+
+                //realizace samotneho zapasu
                 Fighter winner = oktagonMMA.Fight(fighter1, fighter2);
-                oktagonMMA.SignNewFighter(unsignedFighters);
+
+                //moznost podpisu noveho fightera
+                oktagonMMA.SignNewFighter(unsignedFighters,fighters);
             }
 
-            Console.WriteLine("Vycerpal jsi budget organizace. Konec hry.");
+            Console.WriteLine("Rozpocet organizace byl vycerpan. Jiz nemas finance na realizaci dalsiho zapasu. Hra konci.");
+            Console.ReadKey();
         }
     }
 }
