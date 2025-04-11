@@ -13,6 +13,7 @@ namespace paint
 {
     public partial class PaintApp : Form
     {
+        // Inicializace promennych a nastaveni platna
         #region Initialization
         private Bitmap bitmap;
         private Graphics g;
@@ -24,6 +25,12 @@ namespace paint
         private Color selectedColor = Color.Black;
         private Rectangle tempShape;
         private bool isShapeDrawing = false;
+        private Rectangle imageRect;
+        private bool isResizingImage = false;
+        private bool moveModeActive = false;
+        private bool isMoving = false;
+        private Point moveOffset;
+        private const int handleSize = 10;
 
         public PaintApp()
         {
@@ -52,6 +59,7 @@ namespace paint
         }
         #endregion
 
+        // Sprava souboru: nacitani obrazku a cisteni platna
         #region File Management
         private void LoadImage(object sender, EventArgs e) //otevreni obrazku
         {
@@ -60,10 +68,16 @@ namespace paint
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     loadedImage = Image.FromFile(openFileDialog.FileName);
-                    using (Graphics gTemp = Graphics.FromImage(bitmap))
-                    {
-                        gTemp.DrawImage(loadedImage, new Point(0, 0)); 
-                    }
+                    int availableWidth = picBox.Width;
+                    int availableHeight = picBox.Height;
+                    double scaleX = (double)availableWidth / loadedImage.Width;
+                    double scaleY = (double)availableHeight / loadedImage.Height;
+                    double scale = Math.Min(scaleX, scaleY);
+                    int newWidth = (int)(loadedImage.Width * scale);
+                    int newHeight = (int)(loadedImage.Height * scale);
+                    int x = (availableWidth - newWidth) / 2;
+                    int y = (availableHeight - newHeight) / 2;
+                    imageRect = new Rectangle(x, y, newWidth, newHeight);
                     picBox.Invalidate();
                 }
             }
@@ -71,10 +85,13 @@ namespace paint
         private void ClearCanvas(object sender, EventArgs e) //smazani
         {
             g.Clear(Color.White);
+            loadedImage = null;
+            imageRect = Rectangle.Empty;
             picBox.Invalidate();
         }
         #endregion
 
+        // Sprava barev: volba barvy pomoci ColorDialog a nastaveni barvy pera
         #region Color Management
         private void SelectColor(object sender, EventArgs e) //barevny dialog
         {
@@ -94,8 +111,8 @@ namespace paint
         }
         #endregion
 
+        // Volba rezimu kresleni: kresleni car, obdelniku, elipsy, apod.
         #region Draw Modes
-        //druh malovani
         private void btnPencil_Click(object sender, EventArgs e)
         {
             drawMode = "line";
@@ -116,9 +133,37 @@ namespace paint
         }
         #endregion
 
+        // Logika kresleni: obsluha MouseDown, MouseMove, MouseUp a vykreslovani vseho na platno
         #region Drawing Logic
+        private void PicBox_Paint(object sender, PaintEventArgs e) // Vykresleni bitmapy a vlozeneho obrazku s handle
+        {
+            e.Graphics.DrawImage(bitmap, Point.Empty);
+            if (loadedImage != null)
+            {
+                e.Graphics.DrawImage(loadedImage, imageRect);
+                Rectangle handleRect = new Rectangle(imageRect.Right - handleSize, imageRect.Bottom - handleSize, handleSize, handleSize);
+                e.Graphics.FillRectangle(Brushes.Red, handleRect);
+            }
+        }
         private void PicBox_MouseDown(object sender, MouseEventArgs e)
         {
+            if (loadedImage != null && !moveModeActive)
+            {
+                Rectangle handleRect = new Rectangle(imageRect.Right - handleSize, imageRect.Bottom - handleSize, handleSize, handleSize);
+                if (handleRect.Contains(e.Location))
+                {
+                    isResizingImage = true;
+                    return;
+                }
+            }
+
+            if (moveModeActive && imageRect.Contains(e.Location))
+            {
+                isMoving = true;
+                moveOffset = new Point(e.X - imageRect.X, e.Y - imageRect.Y);
+                return;
+            }
+
             lastPoint = e.Location;
             isDrawing = true;
             isShapeDrawing = drawMode != "line";
@@ -126,6 +171,24 @@ namespace paint
 
         private void PicBox_MouseMove(object sender, MouseEventArgs e)
         {
+            if (isMoving)
+            {
+                imageRect = new Rectangle(e.X - moveOffset.X, e.Y - moveOffset.Y, imageRect.Width, imageRect.Height);
+                picBox.Invalidate();
+                return;
+            }
+            if (isResizingImage)
+            {
+                int newWidth = e.X - imageRect.X;
+                int newHeight = e.Y - imageRect.Y;
+                if (newWidth > 10 && newHeight > 10)
+                {
+                    imageRect.Size = new Size(newWidth, newHeight);
+                    picBox.Invalidate();
+                }
+                return;
+            }
+
             if (!isDrawing) return;
 
             if (drawMode == "line")
@@ -151,6 +214,16 @@ namespace paint
 
         private void PicBox_MouseUp(object sender, MouseEventArgs e)
         {
+            if (isMoving)//pokud hybal, ukoncime
+            {
+                isMoving = false;
+                return;
+            }
+            if (isResizingImage) //pokud menil velikost, ukoncime
+            {
+                isResizingImage = false;
+                return;
+            }
             isDrawing = false;
 
             if (isShapeDrawing)
@@ -176,12 +249,9 @@ namespace paint
 
             picBox.Invalidate();
         }
-        private void PicBox_Paint(object sender, PaintEventArgs e)
-        {
-            e.Graphics.DrawImage(bitmap, Point.Empty);
-        }
         #endregion
 
+        // Obsluha ovladacich prvku: tlacitka pro barvy, smazani, otevreni, ulozeni, posun, resize,...
         #region UI Event Handlers
         #region Color Buttons
         private void btnColorPicker_Click(object sender, EventArgs e)
@@ -264,6 +334,11 @@ namespace paint
                 }
             }
         }
+        private void btnMove_Click(object sender, EventArgs e)
+        {
+            moveModeActive = !moveModeActive;
+            btnMove.Text = moveModeActive ? "Move: ON" : "Move: OFF"; //zdroj Chat GPT
+        }
 
         private void trckB1_ValueChanged(object sender, EventArgs e)
         {
@@ -276,5 +351,7 @@ namespace paint
         }
 
         #endregion
+
+        
     }
 }

@@ -31,6 +31,8 @@
             this.picBox = new System.Windows.Forms.PictureBox();
             this.pnl1 = new System.Windows.Forms.Panel();
             this.pnl2 = new System.Windows.Forms.Panel();
+            this.lbl1 = new System.Windows.Forms.Label();
+            this.trckB1 = new System.Windows.Forms.TrackBar();
             this.grpBoxTools = new System.Windows.Forms.GroupBox();
             this.tlStrp = new System.Windows.Forms.ToolStrip();
             this.btnPencil = new System.Windows.Forms.ToolStripButton();
@@ -40,6 +42,8 @@
             this.btnOpen = new System.Windows.Forms.ToolStripButton();
             this.btnBin = new System.Windows.Forms.ToolStripButton();
             this.grpBoxColors = new System.Windows.Forms.GroupBox();
+            this.btnErease = new System.Windows.Forms.Button();
+            this.chckBxShps = new System.Windows.Forms.CheckBox();
             this.btnColorPicker = new System.Windows.Forms.Button();
             this.btnBlack = new System.Windows.Forms.Button();
             this.btnPurple = new System.Windows.Forms.Button();
@@ -49,16 +53,13 @@
             this.btnYellow = new System.Windows.Forms.Button();
             this.btnOrange = new System.Windows.Forms.Button();
             this.btnRed = new System.Windows.Forms.Button();
-            this.trckB1 = new System.Windows.Forms.TrackBar();
-            this.lbl1 = new System.Windows.Forms.Label();
-            this.chckBxShps = new System.Windows.Forms.CheckBox();
-            this.btnErease = new System.Windows.Forms.Button();
+            this.btnMove = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.picBox)).BeginInit();
             this.pnl2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trckB1)).BeginInit();
             this.grpBoxTools.SuspendLayout();
             this.tlStrp.SuspendLayout();
             this.grpBoxColors.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trckB1)).BeginInit();
             this.SuspendLayout();
             // 
             // picBox
@@ -90,6 +91,25 @@
             this.pnl2.Size = new System.Drawing.Size(883, 74);
             this.pnl2.TabIndex = 2;
             // 
+            // lbl1
+            // 
+            this.lbl1.AutoSize = true;
+            this.lbl1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.lbl1.Location = new System.Drawing.Point(0, 49);
+            this.lbl1.Name = "lbl1";
+            this.lbl1.Size = new System.Drawing.Size(137, 25);
+            this.lbl1.TabIndex = 5;
+            this.lbl1.Text = "tloušťka pera";
+            // 
+            // trckB1
+            // 
+            this.trckB1.Location = new System.Drawing.Point(145, 20);
+            this.trckB1.Margin = new System.Windows.Forms.Padding(5);
+            this.trckB1.Name = "trckB1";
+            this.trckB1.Size = new System.Drawing.Size(544, 90);
+            this.trckB1.TabIndex = 4;
+            this.trckB1.ValueChanged += new System.EventHandler(this.trckB1_ValueChanged);
+            // 
             // grpBoxTools
             // 
             this.grpBoxTools.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
@@ -112,10 +132,11 @@
             this.btnEllipse,
             this.btnSave,
             this.btnOpen,
-            this.btnBin});
+            this.btnBin,
+            this.btnMove});
             this.tlStrp.Location = new System.Drawing.Point(3, 27);
             this.tlStrp.Name = "tlStrp";
-            this.tlStrp.Size = new System.Drawing.Size(1084, 42);
+            this.tlStrp.Size = new System.Drawing.Size(1084, 50);
             this.tlStrp.TabIndex = 0;
             // 
             // btnPencil
@@ -125,7 +146,7 @@
             this.btnPencil.Image = global::paint.Properties.Resources.imgPencil;
             this.btnPencil.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnPencil.Name = "btnPencil";
-            this.btnPencil.Size = new System.Drawing.Size(46, 36);
+            this.btnPencil.Size = new System.Drawing.Size(46, 44);
             this.btnPencil.Text = "toolStripButton1";
             this.btnPencil.Click += new System.EventHandler(this.btnPencil_Click);
             // 
@@ -136,7 +157,7 @@
             this.btnRectangle.Image = global::paint.Properties.Resources.imgRectangle;
             this.btnRectangle.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnRectangle.Name = "btnRectangle";
-            this.btnRectangle.Size = new System.Drawing.Size(46, 36);
+            this.btnRectangle.Size = new System.Drawing.Size(46, 44);
             this.btnRectangle.Text = "toolStripButton2";
             this.btnRectangle.Click += new System.EventHandler(this.btnRectangle_Click);
             // 
@@ -147,7 +168,7 @@
             this.btnEllipse.Image = global::paint.Properties.Resources.imgEllipse;
             this.btnEllipse.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnEllipse.Name = "btnEllipse";
-            this.btnEllipse.Size = new System.Drawing.Size(46, 36);
+            this.btnEllipse.Size = new System.Drawing.Size(46, 44);
             this.btnEllipse.Text = "toolStripButton3";
             this.btnEllipse.Click += new System.EventHandler(this.btnEllipse_Click);
             // 
@@ -159,7 +180,7 @@
             this.btnSave.Image = global::paint.Properties.Resources.imgSave;
             this.btnSave.ImageTransparentColor = System.Drawing.Color.Transparent;
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(46, 36);
+            this.btnSave.Size = new System.Drawing.Size(46, 44);
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // btnOpen
@@ -169,7 +190,7 @@
             this.btnOpen.Image = global::paint.Properties.Resources.imgOpen;
             this.btnOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnOpen.Name = "btnOpen";
-            this.btnOpen.Size = new System.Drawing.Size(46, 36);
+            this.btnOpen.Size = new System.Drawing.Size(46, 44);
             this.btnOpen.Text = "toolStripButton1";
             this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
             // 
@@ -181,7 +202,7 @@
             this.btnBin.Image = global::paint.Properties.Resources.imgBin;
             this.btnBin.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnBin.Name = "btnBin";
-            this.btnBin.Size = new System.Drawing.Size(46, 36);
+            this.btnBin.Size = new System.Drawing.Size(46, 44);
             this.btnBin.Text = "toolStripButton1";
             this.btnBin.Click += new System.EventHandler(this.btnBin_Click);
             // 
@@ -206,6 +227,34 @@
             this.grpBoxColors.TabIndex = 3;
             this.grpBoxColors.TabStop = false;
             this.grpBoxColors.Text = "Barvy";
+            // 
+            // btnErease
+            // 
+            this.btnErease.BackColor = System.Drawing.Color.DarkSlateBlue;
+            this.btnErease.ForeColor = System.Drawing.Color.White;
+            this.btnErease.Location = new System.Drawing.Point(103, 135);
+            this.btnErease.Name = "btnErease";
+            this.btnErease.Size = new System.Drawing.Size(98, 94);
+            this.btnErease.TabIndex = 9;
+            this.btnErease.Tag = "";
+            this.btnErease.Text = "GUMA";
+            this.btnErease.UseVisualStyleBackColor = false;
+            this.btnErease.UseWaitCursor = true;
+            this.btnErease.Click += new System.EventHandler(this.btnErease_Click);
+            // 
+            // chckBxShps
+            // 
+            this.chckBxShps.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.chckBxShps.AutoSize = true;
+            this.chckBxShps.Location = new System.Drawing.Point(21, 235);
+            this.chckBxShps.Name = "chckBxShps";
+            this.chckBxShps.Size = new System.Drawing.Size(148, 29);
+            this.chckBxShps.TabIndex = 1;
+            this.chckBxShps.Text = "vyplnit tvar";
+            this.chckBxShps.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.chckBxShps.UseVisualStyleBackColor = true;
             // 
             // btnColorPicker
             // 
@@ -302,52 +351,16 @@
             this.btnRed.UseVisualStyleBackColor = false;
             this.btnRed.Click += new System.EventHandler(this.btnRed_Click);
             // 
-            // trckB1
+            // btnMove
             // 
-            this.trckB1.Location = new System.Drawing.Point(145, 20);
-            this.trckB1.Margin = new System.Windows.Forms.Padding(5);
-            this.trckB1.Name = "trckB1";
-            this.trckB1.Size = new System.Drawing.Size(544, 90);
-            this.trckB1.TabIndex = 4;
-            this.trckB1.ValueChanged += new System.EventHandler(this.trckB1_ValueChanged);
-            // 
-            // lbl1
-            // 
-            this.lbl1.AutoSize = true;
-            this.lbl1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.lbl1.Location = new System.Drawing.Point(0, 49);
-            this.lbl1.Name = "lbl1";
-            this.lbl1.Size = new System.Drawing.Size(137, 25);
-            this.lbl1.TabIndex = 5;
-            this.lbl1.Text = "tloušťka pera";
-            // 
-            // chckBxShps
-            // 
-            this.chckBxShps.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.chckBxShps.AutoSize = true;
-            this.chckBxShps.Location = new System.Drawing.Point(21, 235);
-            this.chckBxShps.Name = "chckBxShps";
-            this.chckBxShps.Size = new System.Drawing.Size(148, 29);
-            this.chckBxShps.TabIndex = 1;
-            this.chckBxShps.Text = "vyplnit tvar";
-            this.chckBxShps.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.chckBxShps.UseVisualStyleBackColor = true;
-            // 
-            // btnErease
-            // 
-            this.btnErease.BackColor = System.Drawing.Color.DarkSlateBlue;
-            this.btnErease.ForeColor = System.Drawing.Color.White;
-            this.btnErease.Location = new System.Drawing.Point(103, 135);
-            this.btnErease.Name = "btnErease";
-            this.btnErease.Size = new System.Drawing.Size(98, 94);
-            this.btnErease.TabIndex = 9;
-            this.btnErease.Tag = "";
-            this.btnErease.Text = "GUMA";
-            this.btnErease.UseVisualStyleBackColor = false;
-            this.btnErease.UseWaitCursor = true;
-            this.btnErease.Click += new System.EventHandler(this.btnErease_Click);
+            this.btnMove.BackColor = System.Drawing.Color.DarkSlateBlue;
+            this.btnMove.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnMove.ForeColor = System.Drawing.SystemColors.Window;
+            this.btnMove.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnMove.Name = "btnMove";
+            this.btnMove.Size = new System.Drawing.Size(162, 44);
+            this.btnMove.Text = "MOVE IMAGE";
+            this.btnMove.Click += new System.EventHandler(this.btnMove_Click);
             // 
             // PaintApp
             // 
@@ -364,13 +377,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.picBox)).EndInit();
             this.pnl2.ResumeLayout(false);
             this.pnl2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trckB1)).EndInit();
             this.grpBoxTools.ResumeLayout(false);
             this.grpBoxTools.PerformLayout();
             this.tlStrp.ResumeLayout(false);
             this.tlStrp.PerformLayout();
             this.grpBoxColors.ResumeLayout(false);
             this.grpBoxColors.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trckB1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -402,6 +415,7 @@
         private System.Windows.Forms.Label lbl1;
         private System.Windows.Forms.CheckBox chckBxShps;
         private System.Windows.Forms.Button btnErease;
+        private System.Windows.Forms.ToolStripButton btnMove;
     }
 }
 
